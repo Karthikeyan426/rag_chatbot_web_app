@@ -24,3 +24,11 @@ export async function query(data: QueryRequest): Promise<Chat> {
 
     return response.data
 }
+
+export async function deleteChat(chatId: string) {
+    const response = await api.delete(
+        `users/user/chats/${chatId}`,
+    )
+
+    return response.data
+}
