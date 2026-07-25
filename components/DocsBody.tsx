@@ -20,7 +20,11 @@ export default function DocsBody() {
         { id: "ytfyyytfty", user_id: "ghjguvu", doc_name: "user_manual", uploaded_at: "tutfuut" },
         { id: "ytfjjhyytfty", user_id: "ghjguvu", doc_name: "telephone_manual", uploaded_at: "tutfuut" },
         { id: "ytfyyytyigty", user_id: "ghjguvu", doc_name: "fan_manual", uploaded_at: "tutfuut" },
-        { id: "ytytfty", user_id: "ghjguvu", doc_name: "car_manual", uploaded_at: "tutfuut" }
+        { id: "ytytfty", user_id: "ghjguvu", doc_name: "car_manual", uploaded_at: "tutfuut" },
+        { id: "ytfyyhjbhbuvrfty", user_id: "ghjguvu", doc_name: "user_manual", uploaded_at: "tutfuut" },
+        { id: "ytfjjhyctxyytfty", user_id: "ghjguvu", doc_name: "telephone_manual", uploaded_at: "tutfuut" },
+        { id: "ytfy55ftyytyigty", user_id: "ghjguvu", doc_name: "fan_manual", uploaded_at: "tutfuut" },
+        { id: "ytytuit8798fty", user_id: "ghjguvu", doc_name: "car_manual", uploaded_at: "tutfuut" }
     ]);
     const [searchedDocs, setSearchedDocs] = useState<Doc[]>([]);
     const [loading, setLoading] = useState(true);
@@ -148,9 +152,9 @@ export default function DocsBody() {
             </Alert>
             ) }
 
-            {!loading && !isDocsEmpty ? (<div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+            {!loading && !isDocsEmpty ? (<div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4 h-screen overflow-y-auto">
                 {docSearchText === "" ? (docs.map((doc) => (
-                    <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer w-60 h-auto" onClick={() => routeToChat(doc.id, doc.doc_name)}>
+                    <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer w-60 h-96" onClick={() => routeToChat(doc.id, doc.doc_name)}>
 
                         <CardContent className="relative aspect-square pointer-events-none">
                             <Image
@@ -168,7 +172,7 @@ export default function DocsBody() {
                     </Card>
                 ))) :
                     (searchedDocs.map((doc) => (
-                        <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer w-60 h-auto" onClick={() => routeToChat(doc.id, doc.doc_name)}>
+                        <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer w-60 h-96" onClick={() => routeToChat(doc.id, doc.doc_name)}>
 
                             <CardContent className="relative aspect-square pointer-events-none">
                                 <Image

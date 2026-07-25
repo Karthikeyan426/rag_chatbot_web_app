@@ -7,7 +7,7 @@ export default function ChatsPage() {
     const docName = searchParams.get('doc_name');
 
     return (
-       <main className="min-h-screen w-screen bg-gray-100">
+       <main className="h-screen w-screen bg-gray-100 overflow-hidden">
         <ChatsBody docId = {docId!} docName = {docName!}/>
        </main>
     );
