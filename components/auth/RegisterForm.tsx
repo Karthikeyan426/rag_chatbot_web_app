@@ -13,6 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { NetworkError, UsernameConflictError } from "@/lib/exceptions";
+import { Network } from "lucide-react";
+import axios from "axios";
 
 const schema = z
     .object({
@@ -53,10 +56,14 @@ export default function RegisterForm() {
 
             router.push("/login");
         } catch (err: any) {
-            setError(
-                err.response?.data?.detail ??
-                "Registration failed"
-            );
+            if(axios.isAxiosError(err)) {
+                if(err.response?.status === 409) {
+                    setError("Username already taken");
+                }
+                else {
+                    setError("Something went wrong");
+                }
+            }
         } finally {
             setLoading(false);
         }

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import axios  from "axios";
 import { loginUser } from "@/lib/auth";
 
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { AuthenticationError, NetworkError } from "@/lib/exceptions";
 
 const schema = z.object({
     user_name: z.string().min(3),
@@ -49,10 +50,15 @@ export default function LoginForm() {
 
             router.push("/documents");
         } catch (err: any) {
-            setError(
-                err.response?.data?.detail ??
-                "Invalid credentials"
-            );
+            if(axios.isAxiosError(err)) {
+                if(err.response?.status === 400) {
+                    setError("Invalid credentials");
+                }
+                else {
+                    setError("Something went wrong");
+                }
+            }
+            
         } finally {
             setLoading(false);
         }

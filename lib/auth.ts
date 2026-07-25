@@ -13,17 +13,7 @@ export async function loginUser(data: LoginRequest) {
         data
     );
 
-    if(response.status === 200) {
-        return response.data;
-    }
-    else if(response.status === 400) {
-        throw new AuthenticationError("Invalid credentials");
-    }
-    else {
-        throw new NetworkError("Something went wrond");
-    }
-
-    
+    return response.data;
 }
 
 export async function registerUser(data: RegisterRequest) {
@@ -31,14 +21,6 @@ export async function registerUser(data: RegisterRequest) {
         "/users/register",
         data
     );
-
-    if(response.status === 201) {
-        return response.data;
-    }
-    else if(response.status === 409) {
-        throw new UsernameConflictError("Username alreay taken");
-    }
-    else {
-        throw new NetworkError("Something went wrong");
-    }
+    
+    return response.data;
 }
