@@ -128,10 +128,10 @@ export default function DocsBody() {
     )
 
     return (
-        <div className="flex flex-col w-full h-full items-center ">
-            <Label className="text-teal-500 text-lg m-2">Search the documents</Label>
+        <div className="flex flex-col w-full h-full items-center justify-center">
+            <Label className="text-teal-500 text-2xl m-2 ">Search the documents</Label>
 
-            <Input value={docSearchText} onChange={(e) => docSearch(e)} title="Search the documents ..." className="bg-white border-gray-300 w-3/4 h-8 " />
+            <Input value={docSearchText} onChange={(e) => docSearch(e)} title="Search the documents ..." className="bg-white border-gray-300 w-3/4 h-1/16 " />
 
             <input
                 ref={fileInputRef}
@@ -140,7 +140,7 @@ export default function DocsBody() {
                 accept=".pdf,application/pdf"
                 onChange={handleUpload}
             />
-            <Button className="flex items-center justify-center bg-teal-500  m-2 p-10 rounded-sm" onClick={() => fileInputRef.current?.click()} disabled = {isUploading}>
+            <Button className="flex items-center justify-center bg-teal-500  m-2 h-1/8 w-1/10 rounded-sm" onClick={() => fileInputRef.current?.click()} disabled = {isUploading}>
                 <Upload className="text-white text-xl"></Upload>
             </Button>
 
@@ -152,9 +152,9 @@ export default function DocsBody() {
             </Alert>
             ) }
 
-            {!loading && !isDocsEmpty ? (<div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4 h-screen overflow-y-auto">
+            {!loading && !isDocsEmpty ? (<div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 p-4 overflow-y-auto ">
                 {docSearchText === "" ? (docs.map((doc) => (
-                    <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer w-60 h-96" onClick={() => routeToChat(doc.id, doc.doc_name)}>
+                    <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer h-84 w-64" onClick={() => routeToChat(doc.id, doc.doc_name)}>
 
                         <CardContent className="relative aspect-square pointer-events-none">
                             <Image
@@ -162,6 +162,7 @@ export default function DocsBody() {
                                 alt="pdf"
                                 fill
                                 className="object-contain"
+                                loading="eager"
                             />
                         </CardContent>
 
@@ -172,7 +173,7 @@ export default function DocsBody() {
                     </Card>
                 ))) :
                     (searchedDocs.map((doc) => (
-                        <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer w-60 h-96" onClick={() => routeToChat(doc.id, doc.doc_name)}>
+                        <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer w-64 h-84" onClick={() => routeToChat(doc.id, doc.doc_name)}>
 
                             <CardContent className="relative aspect-square pointer-events-none">
                                 <Image
@@ -180,6 +181,7 @@ export default function DocsBody() {
                                     alt="pdf"
                                     fill
                                     className="object-contain"
+                                    loading="eager"
                                 />
                             </CardContent>
 
@@ -210,7 +212,7 @@ export default function DocsBody() {
 
             
             { docsFetchError !== "" && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="rounded-sm m-3 w-2/3">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{docsFetchError}</AlertDescription>
