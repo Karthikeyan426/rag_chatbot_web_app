@@ -58,6 +58,7 @@ export default function DocsBody() {
                         setIsUploading(false);
                         setDocUploadError("");
                         setIsDocUploaded(true);
+                        await handleFetchDocs();
                     }
                 }
             }
@@ -141,7 +142,9 @@ export default function DocsBody() {
                 onChange={handleUpload}
             />
             <Button className="flex items-center justify-center bg-teal-500  m-2 h-1/8 w-1/10 rounded-sm" onClick={() => fileInputRef.current?.click()} disabled = {isUploading}>
-                <Upload className="text-white text-xl"></Upload>
+                {
+                    isUploading !== true ? <Upload className="text-white text-xl"></Upload> : <div> uploading </div>
+                }
             </Button>
 
             { docUploadError !== "" && (

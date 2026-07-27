@@ -1,5 +1,5 @@
 import { Chat, ChatHistoryChat, QueryRequest } from "@/types/chats"
-import { use, useEffect, useState } from "react"
+import { use, useEffect, useRef, useState } from "react"
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import {  BrainCircuit,MoreVertical, File } from "lucide-react";
@@ -69,6 +69,7 @@ me.`, queried_at: "11:14PM"},
     const [error, setError] = useState("");
     const [lastChatId, setLastChatId] = useState("");
     const router = useRouter();
+    const inputRef = useRef<HTMLInputElement>(null);
 
 
     async function handleFetchChatHistory() {
@@ -183,10 +184,11 @@ me.`, queried_at: "11:14PM"},
         }
     }
 
-    async function handleQuery(data: QueryRequest) {
+    async function handleQuery() {
         try {
             setError("");
             setLoading(true);
+            const data : QueryRequest = { doc_id: props.docId, question: inputRef.current?.value!}
             const chat = await processQuery(data);
             lastFiveChats.shift();
             lastFiveChats.push(chat);
@@ -306,9 +308,9 @@ me.`, queried_at: "11:14PM"},
 
 
                 <div className="flex flex-row m-5 items-center justify-center w-4/5">
-                    <Input className="border-gray-300 bg-white w-3/4 h-16" multiple = {true} aria-multiline = {true}/>
+                    <Input className="border-gray-300 bg-white w-3/4 h-16" multiple = {true} aria-multiline = {true} ref={inputRef}/>
 
-                    <Button className="bg-teal-500 m-2 h-8 w-8">
+                    <Button className="bg-teal-500 m-2 h-8 w-8" onClick={handleQuery} disabled = {inputRef.current?.value === null}>
                         <BrainCircuit size={32}>
                         </BrainCircuit>
                     </Button>
