@@ -1,9 +1,12 @@
-import { Chat, ChatHistoryChat } from "@/types/chats"
-import { use, useState } from "react"
+import { Chat, ChatHistoryChat, QueryRequest } from "@/types/chats"
+import { use, useEffect, useState } from "react"
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import {  BrainCircuit,MoreVertical, File } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { deleteChat, processQuery, fetchChatHistory, fetchLastFiveChats } from "@/lib/chats";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function ChatsBody(props: { docId: string, docName: string }) {
     const [chatHistory, setChatHistory] = useState<ChatHistoryChat[]>([
@@ -64,6 +67,163 @@ me.`, queried_at: "11:14PM"},
     const [response, setResponse] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [lastChatId, setLastChatId] = useState("");
+    const router = useRouter();
+
+
+    async function handleFetchChatHistory() {
+        try {
+            setError("");
+            setChatHistory([]);
+            setLoading(true);
+            const chatHistory = await fetchChatHistory(props.docId);
+            setChatHistory(chatHistory);
+            setLastChatId(chatHistory[0]["id"]);
+        }
+        catch(err) {
+            if(axios.isAxiosError(err)) {
+                if(err.response?.status === 404 ) {
+                    setChatHistory([]);
+                }
+                else if (err.response?.status == 401) {
+                    router.replace('/login');
+                }
+                else {
+                    setError("Something went wrong");
+                }
+            }
+
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+    
+    async function handleFetchLastFiveChats() {
+                if(lastChatId === "") {
+                    return;
+                }
+                else {
+                    try {
+                        setError("");
+                        setLastFiveChats([]);
+                        setLoading(true);
+                        const newLastFiveChats = await fetchLastFiveChats(props.docId, lastChatId);
+                        setLastFiveChats(newLastFiveChats)
+
+                    }
+                    catch(err) {
+            if(axios.isAxiosError(err)) {
+                if(err.response?.status === 404 ) {
+                    setChatHistory([]);
+                }
+                else if (err.response?.status == 401) {
+                    router.replace('/login');
+                }
+                else {
+                    setError("Something went wrong");
+                }
+            }
+
+        }
+        finally {
+            setLoading(false)
+        }
+       }
+      }
+
+    async function handleFetchChat(docId: string, lastChatId: string) {
+        try {
+            setError("");
+            setLoading(true);
+            setLastFiveChats([]);
+            const newLastFiveChats = await fetchLastFiveChats(docId, lastChatId);
+            console.log(newLastFiveChats);
+            setLastFiveChats(newLastFiveChats);
+        }
+        catch(err) {
+            if(axios.isAxiosError(err)) {
+                if(err.response?.status === 404 ) {
+                    setLastFiveChats([])
+                }
+                else if (err.response?.status == 401) {
+                    router.replace('/login');
+                }
+                else {
+                    setError("Something went wrong");
+                }
+            }
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleDeleteChat(chatId: string) {
+        try {
+            setError("");
+            setLoading(true);
+            const deletedChat = await deleteChat(chatId);
+        }
+        catch(err) {
+            if(axios.isAxiosError(err)) {
+                if(err.response?.status === 404 ) {
+                    setError("chat couldn't be found");
+                }
+                else if (err.response?.status == 401) {
+                    router.replace('/login');
+                }
+                else {
+                    setError("Something went wrong");
+                }
+            }
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleQuery(data: QueryRequest) {
+        try {
+            setError("");
+            setLoading(true);
+            const chat = await processQuery(data);
+            lastFiveChats.shift();
+            lastFiveChats.push(chat);
+            setLastFiveChats(lastFiveChats);
+        }
+        catch(err) {
+            if(axios.isAxiosError(err)) {
+                if(err.response?.status === 404 ) {
+                    setError("document not found")
+                }
+                else if (err.response?.status == 401) {
+                    router.replace('/login');
+                }
+                else {
+                    setError("Something went wrong");
+                }
+            }
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(
+        () =>{
+            handleFetchChatHistory();
+        }, []
+    )
+
+    useEffect(
+        () => {
+           if(lastChatId) {
+            handleFetchLastFiveChats();
+           }
+        }, [lastChatId]
+    )
+
     return (
         <div className="flex flex-row h-full w-screen ">
 

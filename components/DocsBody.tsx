@@ -205,7 +205,7 @@ export default function DocsBody() {
             {
                 !loading && isDocsEmpty  && (
                     <div>
-                        <p> "Upload documents to start" </p>
+                        <p> Upload documents to start</p>
                     </div>
                 )
             }
