@@ -2,74 +2,22 @@ import { Chat, ChatHistoryChat, QueryRequest } from "@/types/chats"
 import { use, useEffect, useRef, useState } from "react"
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import {  BrainCircuit,MoreVertical, File } from "lucide-react";
+import { BrainCircuit, MoreVertical, File } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { deleteChat, processQuery, fetchChatHistory, fetchLastFiveChats } from "@/lib/chats";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
 export default function ChatsBody(props: { docId: string, docName: string }) {
-    const [chatHistory, setChatHistory] = useState<ChatHistoryChat[]>([
-        { id: "vcewvcwdv", question_content: "what is the opening time", queried_at: "01:24AM " },
-        { id: "vcewv", question_content: "what is the closing time", queried_at: "01:24AM " },
-        { id: "wvcwdv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "wvcwdrdcrv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "wvgvvycwdv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "wvcwvvydv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "wvcwdbjhv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "wvcwdhhv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "wvcwdjbv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "wvcwhubhbdv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "wvcwdjb jhv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "wdv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "vcwdv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "wvchnwdv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "wdv", question_content: "how to book", queried_at: "01:24AM " },
-        { id: "hbb", question_content: "how to book", queried_at: "01:24AM " },
-
-    ]);
-    const [lastFiveChats, setLastFiveChats] = useState<Chat[]>([
-        {id:"jgetrret", question_content:"what is this about", response_content: `The first edition of this book is what got me hooked on Git. This was my introduction to a style of
-making software that felt more natural than anything I had seen before. I had been a developer for
-several years by then, but this was the right turn that sent me down a much more interesting path
-than the one I was on.
-Now, years later, I’m a contributor to a major Git implementation, I’ve worked for the largest Git
-hosting company, and I’ve traveled the world teaching people about Git. When Scott asked if I’d be
-interested in working on the second edition, I didn’t even have to think.
-It’s been a great pleasure and privilege to work on this book. I hope it helps you as much as it did
-me.`, queried_at: "11:14PM"},
-        {id:"sde", question_content:"what is this about", response_content: `The first edition of this book is what got me hooked on Git. This was my introduction to a style of
-making software that felt more natural than anything I had seen before. I had been a developer for
-several years by then, but this was the right turn that sent me down a much more interesting path
-than the one I was on.
-Now, years later, I’m a contributor to a major Git implementation, I’ve worked for the largest Git
-hosting company, and I’ve traveled the world teaching people about Git. When Scott asked if I’d be
-interested in working on the second edition, I didn’t even have to think.
-It’s been a great pleasure and privilege to work on this book. I hope it helps you as much as it did
-me.`, queried_at: "11:14PM"},
-        {id:"sxwx", question_content:"what is this about", response_content: `The first edition of this book is what got me hooked on Git. This was my introduction to a style of
-making software that felt more natural than anything I had seen before. I had been a developer for
-several years by then, but this was the right turn that sent me down a much more interesting path
-than the one I was on.
-Now, years later, I’m a contributor to a major Git implementation, I’ve worked for the largest Git
-hosting company, and I’ve traveled the world teaching people about Git. When Scott asked if I’d be
-interested in working on the second edition, I didn’t even have to think.
-It’s been a great pleasure and privilege to work on this book. I hope it helps you as much as it did
-me.`, queried_at: "11:14PM"},
-        {id:"ijh6", question_content:"what is this about", response_content: "this is about technical manual", queried_at: "11:14PM"},
-        {id:"7887", question_content:"what is this about", response_content: "this is about technical manual", queried_at: "11:14PM"},
-        {id:",h78", question_content:"what is this about", response_content: "this is about technical manual", queried_at: "11:14PM"},
-        {id:"jgetgg87yrret", question_content:"what is this about", response_content: "this is about technical manual", queried_at: "11:14PM"},
-        {id:"jgetrjhgyio;ret", question_content:"what is this about", response_content: "this is about technical manual", queried_at: "11:14PM"},
-        {id:"jgetrre'oihygt", question_content:"what is this about", response_content: "this is about technical manual", queried_at: "11:14PM"}
-    ]);
+    const [chatHistory, setChatHistory] = useState<ChatHistoryChat[]>([]);
+    const [lastFiveChats, setLastFiveChats] = useState<Chat[]>([]);
     const [query, setQuery] = useState("");
     const [response, setResponse] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [lastChatId, setLastChatId] = useState("");
     const router = useRouter();
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
 
 
     async function handleFetchChatHistory() {
@@ -81,9 +29,9 @@ me.`, queried_at: "11:14PM"},
             setChatHistory(chatHistory);
             setLastChatId(chatHistory[0]["id"]);
         }
-        catch(err) {
-            if(axios.isAxiosError(err)) {
-                if(err.response?.status === 404 ) {
+        catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (err.response?.status === 404) {
                     setChatHistory([]);
                 }
                 else if (err.response?.status == 401) {
@@ -99,39 +47,39 @@ me.`, queried_at: "11:14PM"},
             setLoading(false)
         }
     }
-    
+
     async function handleFetchLastFiveChats() {
-                if(lastChatId === "") {
-                    return;
-                }
-                else {
-                    try {
-                        setError("");
-                        setLastFiveChats([]);
-                        setLoading(true);
-                        const newLastFiveChats = await fetchLastFiveChats(props.docId, lastChatId);
-                        setLastFiveChats(newLastFiveChats)
+        if (lastChatId === "") {
+            return;
+        }
+        else {
+            try {
+                setError("");
+                setLastFiveChats([]);
+                setLoading(true);
+                const newLastFiveChats = await fetchLastFiveChats(props.docId, lastChatId);
+                setLastFiveChats(newLastFiveChats)
 
-                    }
-                    catch(err) {
-            if(axios.isAxiosError(err)) {
-                if(err.response?.status === 404 ) {
-                    setChatHistory([]);
-                }
-                else if (err.response?.status == 401) {
-                    router.replace('/login');
-                }
-                else {
-                    setError("Something went wrong");
-                }
             }
+            catch (err) {
+                if (axios.isAxiosError(err)) {
+                    if (err.response?.status === 404) {
+                        setChatHistory([]);
+                    }
+                    else if (err.response?.status == 401) {
+                        router.replace('/login');
+                    }
+                    else {
+                        setError("Something went wrong");
+                    }
+                }
 
+            }
+            finally {
+                setLoading(false)
+            }
         }
-        finally {
-            setLoading(false)
-        }
-       }
-      }
+    }
 
     async function handleFetchChat(docId: string, lastChatId: string) {
         try {
@@ -142,9 +90,9 @@ me.`, queried_at: "11:14PM"},
             console.log(newLastFiveChats);
             setLastFiveChats(newLastFiveChats);
         }
-        catch(err) {
-            if(axios.isAxiosError(err)) {
-                if(err.response?.status === 404 ) {
+        catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (err.response?.status === 404) {
                     setLastFiveChats([])
                 }
                 else if (err.response?.status == 401) {
@@ -166,9 +114,9 @@ me.`, queried_at: "11:14PM"},
             setLoading(true);
             const deletedChat = await deleteChat(chatId);
         }
-        catch(err) {
-            if(axios.isAxiosError(err)) {
-                if(err.response?.status === 404 ) {
+        catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (err.response?.status === 404) {
                     setError("chat couldn't be found");
                 }
                 else if (err.response?.status == 401) {
@@ -188,15 +136,15 @@ me.`, queried_at: "11:14PM"},
         try {
             setError("");
             setLoading(true);
-            const data : QueryRequest = { doc_id: props.docId, question: inputRef.current?.value!}
+            const data: QueryRequest = { doc_id: props.docId, question: inputRef.current?.value! }
             const chat = await processQuery(data);
             lastFiveChats.shift();
             lastFiveChats.push(chat);
             setLastFiveChats(lastFiveChats);
         }
-        catch(err) {
-            if(axios.isAxiosError(err)) {
-                if(err.response?.status === 404 ) {
+        catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (err.response?.status === 404) {
                     setError("document not found")
                 }
                 else if (err.response?.status == 401) {
@@ -213,23 +161,23 @@ me.`, queried_at: "11:14PM"},
     }
 
     useEffect(
-        () =>{
+        () => {
             handleFetchChatHistory();
         }, []
     )
 
     useEffect(
         () => {
-           if(lastChatId) {
-            handleFetchLastFiveChats();
-           }
+            if (lastChatId) {
+                handleFetchLastFiveChats();
+            }
         }, [lastChatId]
     )
 
     return (
         <div className="flex flex-row h-full w-screen ">
 
-            <div className="flex flex-col mr-3 h-full w-1/5.2">
+            <div className="flex flex-col mr-3 h-full w-1/4">
                 <div className="bg-teal-500 text-white w-xs  h-24 flex items-center justify-center mt-4 text-2xl rounded-r-lg">
                     Chat History
                 </div>
@@ -257,7 +205,7 @@ me.`, queried_at: "11:14PM"},
 
                                         <DropdownMenuItem
                                             onClick={() => {
-                                                
+
                                             }}
                                             className="text-red-600 focus:text-red-600 text-center"
                                         >
@@ -295,7 +243,7 @@ me.`, queried_at: "11:14PM"},
                                     <div className="flex flex-col bg-slate-300  text-gray-800 m-1 self-end rounded-sm p-3">
                                         <p> {chat.question_content} </p>
                                         <div className="self-end text-xs text-gray-500">
-                                            {chat.queried_at} 
+                                            {chat.queried_at}
                                         </div>
                                     </div>
 
@@ -308,9 +256,25 @@ me.`, queried_at: "11:14PM"},
 
 
                 <div className="flex flex-row m-5 items-center justify-center w-4/5">
-                    <Input className="border-gray-300 bg-white w-3/4 h-16" multiple = {true} aria-multiline = {true} ref={inputRef}/>
-
-                    <Button className="bg-teal-500 m-2 h-8 w-8" onClick={handleQuery} disabled = {inputRef.current?.value === null}>
+                    <textarea
+                        ref={inputRef}
+                        className="border border-gray-300 bg-white w-3/4 rounded-md px-3 py-2 resize-none overflow-hidden focus:outline-none focus:ring-2 focus:ring-teal-500 min-h-10 max-h-40"
+                        rows={1}
+                        onChange={(e) => {
+                            setQuery(e.target.value);
+                            e.target.style.height = 'auto';
+                            e.target.style.height = `${e.target.scrollHeight}px`;
+                        }}
+                        placeholder="Ask a question..."
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                handleQuery();
+                            }
+                        }
+                        }
+                    />
+                    < Button className="bg-teal-500 m-2 px-6 py-5" onClick={handleQuery} disabled={inputRef.current?.value === ""} >
                         <BrainCircuit size={32}>
                         </BrainCircuit>
                     </Button>
@@ -318,6 +282,6 @@ me.`, queried_at: "11:14PM"},
 
             </div>
 
-        </div>
+        </div >
     )
 }

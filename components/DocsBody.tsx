@@ -5,14 +5,15 @@ import { Label } from "./ui/label";
 import { Doc } from "../types/docs";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
-import { Upload } from "lucide-react";
+import { MoreVertical, Upload } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
-import { fetchDocs, uploadDoc } from "@/lib/docs";
+import { deleteDoc, fetchDocs, uploadDoc } from "@/lib/docs";
 import axios from "axios";
 import { Skeleton } from "./ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 export default function DocsBody() {
     const [docSearchText, setDocSearchText] = useState("");
@@ -119,6 +120,37 @@ export default function DocsBody() {
         }, []
     )
 
+    async function handleDeleteDoc(docId: string) {
+        try {
+            setDocsFetchError("");
+            setLoading(true);
+            const doc = await deleteDoc(docId);
+            if(doc) {
+                await fetchDocs();
+            }
+        }
+        catch (err: any) {
+            if (axios.isAxiosError(err)) {
+                if (err.response?.status === 401) {
+                    setDocsFetchError("Unauthorized access");
+                    await delay(2000);
+                    localStorage.removeItem("access_token");
+                    router.replace("/login");
+                }
+                else if (err.response?.status === 404) {
+                    setDocsFetchError('Document not found');
+                }
+                else {
+                    setDocsFetchError("Something went wrong");
+                }
+            }
+
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <div className="flex flex-col w-full h-full">
             <div className="sticky top-0 bg-white z-10 flex flex-col items-center py-3 px-4 border-b border-gray-200 shadow-sm">
@@ -151,14 +183,14 @@ export default function DocsBody() {
             <div className="flex-1 overflow-y-auto flex flex-col items-center">
                 {!loading && !isDocsEmpty ? (<div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
                     {docSearchText === "" ? (docs.map((doc) => {
-                        const cardClass = `shadow-md h-84 w-64 transition-all ${doc.status === "uploaded"
-                                ? "cursor-not-allowed opacity-50"
-                                : "hover:shadow-lg active:scale-95 cursor-pointer"}`;
+                        const cardClass = `flex flex-col shadow-md w-64 transition-all ${doc.status === "uploaded"
+                            ? "cursor-not-allowed opacity-50"
+                            : "hover:shadow-lg active:scale-95 cursor-pointer"}`;
                         return (
                             <Card key={doc.id} className={cardClass} onClick={doc.status === "indexed" ? () => routeToChat(doc.id, doc.doc_name) : undefined} >
-                                {doc.status === "uploaded" && (<CardHeader className="text-teal-500">
+                                {doc.status === "uploaded" ? (<CardHeader className="text-white text-center bg-teal-300 rounded-lg w-3/4 self-center">
                                     indexing
-                                </CardHeader>)}
+                                </CardHeader>) : (<CardHeader className="text-white text-center bg-teal-300 rounded-lg w-3/4 self-center">uploaded</CardHeader>)}
                                 <CardContent className="relative aspect-square pointer-events-none">
                                     <Image
                                         src="/PDF_file_icon.svg"
@@ -169,23 +201,48 @@ export default function DocsBody() {
                                     />
                                 </CardContent>
 
-                                <CardFooter className="text-center justify-center text-teal-500">
-                                    <p>{doc.doc_name}</p>
+                                <CardFooter className="flex flex-row items-center justify-between text-teal-500  px-3">
+                                    <p className="truncate flex1 text-center">{doc.doc_name}</p>
+                                    <div className="self-end">
+                                        <DropdownMenu >
+                                            <DropdownMenuTrigger asChild>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 rounded-full hover:bg-gray-200 flex-shrink-0"
+                                                >
+                                                    <MoreVertical className="h-5 w-5 text-gray-600" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+
+                                            <DropdownMenuContent align="end" className="w-40 text-center">
+
+                                                <DropdownMenuItem
+                                                    onClick={async () =>  {
+                                                        await handleDeleteDoc(doc.id)
+                                                    }}
+                                                    className="text-red-600 focus:text-red-600 text-center"
+                                                >
+                                                    Delete
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
                                 </CardFooter>
 
                             </Card>
                         )
                     })) :
                         (searchedDocs.map((doc) => {
-                            const cardClass = `shadow-md h-84 w-64 transition-all ${doc.status === "uploaded"
-                                    ? "cursor-not-allowed opacity-50"
-                                    : "hover:shadow-lg active:scale-95 cursor-pointer"}`;
+                            const cardClass = `shadow-md flex flex-col w-64 transition-all ${doc.status === "uploaded"
+                                ? "cursor-not-allowed opacity-50"
+                                : "hover:shadow-lg active:scale-95 cursor-pointer"}`;
                             return (
-                                <Card key={doc.id} className={cardClass} onClick={() => routeToChat(doc.id, doc.doc_name)}>
-                                    {doc.status === "uploaded" && (<CardHeader className="text-teal-500">
-                                    indexing
-                                </CardHeader>)}
-                                    <CardContent className="relative aspect-square pointer-events-none">
+                                <Card key={doc.id} className={cardClass}  onClick={doc.status === "indexed" ? () => routeToChat(doc.id, doc.doc_name) : undefined}>
+                                    {doc.status === "uploaded" ? (<CardHeader className="text-white text-center bg-teal-300 rounded-lg w-3/4 self-center">
+                                        indexing
+                                    </CardHeader>) : (<CardHeader className="text-white text-center bg-teal-300 rounded-lg w-3/4 self-center">uploaded</CardHeader>)}
+                                    <CardContent className="relative aspect-square pointer-events-none" >
                                         <Image
                                             src="/PDF_file_icon.svg"
                                             alt="pdf"
@@ -195,8 +252,33 @@ export default function DocsBody() {
                                         />
                                     </CardContent>
 
-                                    <CardFooter className="text-center justify-center text-teal-500">
-                                        <p>{doc.doc_name}</p>
+                                    <CardFooter className="flex flex-row justify-between  px-3 items-center text-teal-500">
+                                        <p className="truncate flex1 text-center">{doc.doc_name}</p>
+                                        <div className="self-end">
+                                            <DropdownMenu >
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 rounded-full hover:bg-gray-200 flex-shrink-0"
+                                                    >
+                                                        <MoreVertical className="h-5 w-5 text-gray-600" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+
+                                                <DropdownMenuContent align="end" className="w-40 text-center">
+
+                                                    <DropdownMenuItem
+                                                        onClick={async () => {
+                                                            await handleDeleteDoc(doc.id);
+                                                        }}
+                                                        className="text-red-600 focus:text-red-600 text-center"
+                                                    >
+                                                        Delete
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
                                     </CardFooter>
 
                                 </Card>

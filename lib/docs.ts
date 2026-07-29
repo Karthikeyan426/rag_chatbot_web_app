@@ -19,3 +19,11 @@ export async function uploadDoc(doc: File) {
 
     return response.data;
 }
+
+export async function deleteDoc(docId: string) {
+    const response = await api.delete(
+        `users/user/docs/${docId}`,
+    );
+
+    return response.data;
+}

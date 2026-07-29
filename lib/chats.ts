@@ -33,11 +33,8 @@ export async function processQuery(data: QueryRequest): Promise<Chat> {
 
 export async function deleteChat(chatId: string) {
     const response = await api.delete(
-        `users/user/chats/`, {
-        params: {
-           
-            chat_id: chatId
-        }
+        `users/user/chats/${chatId}`, {
+    
     }
     )
 
