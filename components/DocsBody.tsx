@@ -16,16 +16,7 @@ import { AlertCircle } from 'lucide-react';
 
 export default function DocsBody() {
     const [docSearchText, setDocSearchText] = useState("");
-    const [docs, setDocs] = useState<Doc[]>([
-        { id: "ytfyyytfty", user_id: "ghjguvu", doc_name: "user_manual", uploaded_at: "tutfuut" },
-        { id: "ytfjjhyytfty", user_id: "ghjguvu", doc_name: "telephone_manual", uploaded_at: "tutfuut" },
-        { id: "ytfyyytyigty", user_id: "ghjguvu", doc_name: "fan_manual", uploaded_at: "tutfuut" },
-        { id: "ytytfty", user_id: "ghjguvu", doc_name: "car_manual", uploaded_at: "tutfuut" },
-        { id: "ytfyyhjbhbuvrfty", user_id: "ghjguvu", doc_name: "user_manual", uploaded_at: "tutfuut" },
-        { id: "ytfjjhyctxyytfty", user_id: "ghjguvu", doc_name: "telephone_manual", uploaded_at: "tutfuut" },
-        { id: "ytfy55ftyytyigty", user_id: "ghjguvu", doc_name: "fan_manual", uploaded_at: "tutfuut" },
-        { id: "ytytuit8798fty", user_id: "ghjguvu", doc_name: "car_manual", uploaded_at: "tutfuut" }
-    ]);
+    const [docs, setDocs] = useState<Doc[]>([]);
     const [searchedDocs, setSearchedDocs] = useState<Doc[]>([]);
     const [loading, setLoading] = useState(true);
     const [isUploading, setIsUploading] = useState(false);
@@ -149,7 +140,7 @@ export default function DocsBody() {
                 </Button>
 
                 {docUploadError !== "" && (
-                    <Alert variant="destructive">
+                    <Alert variant="destructive" className="rounded-sm m-3 w-2/3">
                         <AlertCircle className="h-4 w-4" />
                         <AlertTitle>Error</AlertTitle>
                         <AlertDescription>{docUploadError}</AlertDescription>
@@ -159,28 +150,15 @@ export default function DocsBody() {
 
             <div className="flex-1 overflow-y-auto flex flex-col items-center">
                 {!loading && !isDocsEmpty ? (<div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
-                    {docSearchText === "" ? (docs.map((doc) => (
-                        <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer h-84 w-64" onClick={() => routeToChat(doc.id, doc.doc_name)}>
-
-                            <CardContent className="relative aspect-square pointer-events-none">
-                                <Image
-                                    src="/PDF_file_icon.svg"
-                                    alt="pdf"
-                                    fill
-                                    className="object-contain"
-                                    loading="eager"
-                                />
-                            </CardContent>
-
-                            <CardFooter className="text-center justify-center text-teal-500">
-                                <p>{doc.doc_name}</p>
-                            </CardFooter>
-
-                        </Card>
-                    ))) :
-                        (searchedDocs.map((doc) => (
-                            <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer w-64 h-84" onClick={() => routeToChat(doc.id, doc.doc_name)}>
-
+                    {docSearchText === "" ? (docs.map((doc) => {
+                        const cardClass = `shadow-md h-84 w-64 transition-all ${doc.status === "uploaded"
+                                ? "cursor-not-allowed opacity-50"
+                                : "hover:shadow-lg active:scale-95 cursor-pointer"}`;
+                        return (
+                            <Card key={doc.id} className={cardClass} onClick={doc.status === "indexed" ? () => routeToChat(doc.id, doc.doc_name) : undefined} >
+                                {doc.status === "uploaded" && (<CardHeader className="text-teal-500">
+                                    indexing
+                                </CardHeader>)}
                                 <CardContent className="relative aspect-square pointer-events-none">
                                     <Image
                                         src="/PDF_file_icon.svg"
@@ -196,7 +174,34 @@ export default function DocsBody() {
                                 </CardFooter>
 
                             </Card>
-                        )))
+                        )
+                    })) :
+                        (searchedDocs.map((doc) => {
+                            const cardClass = `shadow-md h-84 w-64 transition-all ${doc.status === "uploaded"
+                                    ? "cursor-not-allowed opacity-50"
+                                    : "hover:shadow-lg active:scale-95 cursor-pointer"}`;
+                            return (
+                                <Card key={doc.id} className={cardClass} onClick={() => routeToChat(doc.id, doc.doc_name)}>
+                                    {doc.status === "uploaded" && (<CardHeader className="text-teal-500">
+                                    indexing
+                                </CardHeader>)}
+                                    <CardContent className="relative aspect-square pointer-events-none">
+                                        <Image
+                                            src="/PDF_file_icon.svg"
+                                            alt="pdf"
+                                            fill
+                                            className="object-contain"
+                                            loading="eager"
+                                        />
+                                    </CardContent>
+
+                                    <CardFooter className="text-center justify-center text-teal-500">
+                                        <p>{doc.doc_name}</p>
+                                    </CardFooter>
+
+                                </Card>
+                            )
+                        }))
                     }
 
                 </div>) :
