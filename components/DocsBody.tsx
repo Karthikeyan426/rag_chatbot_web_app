@@ -129,54 +129,38 @@ export default function DocsBody() {
     )
 
     return (
-        <div className="flex flex-col w-full h-full items-center justify-center">
-            <Label className="text-teal-500 text-2xl m-2 ">Search the documents</Label>
+        <div className="flex flex-col w-full h-full">
+            <div className="sticky top-0 bg-white z-10 flex flex-col items-center py-3 px-4 border-b border-gray-200 shadow-sm">
+                <Label className="text-teal-500 text-2xl m-2 ">Search the documents</Label>
 
-            <Input value={docSearchText} onChange={(e) => docSearch(e)} title="Search the documents ..." className="bg-white border-gray-300 w-3/4 h-1/16 " />
+                <Input value={docSearchText} onChange={(e) => docSearch(e)} title="Search the documents ..." className="bg-white border-gray-300 w-3/4 " />
 
-            <input
-                ref={fileInputRef}
-                type="file"
-                className="hidden"
-                accept=".pdf,application/pdf"
-                onChange={handleUpload}
-            />
-            <Button className="flex items-center justify-center bg-teal-500  m-2 h-1/8 w-1/10 rounded-sm" onClick={() => fileInputRef.current?.click()} disabled = {isUploading}>
-                {
-                    isUploading !== true ? <Upload className="text-white text-xl"></Upload> : <div> uploading </div>
-                }
-            </Button>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    accept=".pdf,application/pdf"
+                    onChange={handleUpload}
+                />
+                <Button className="flex items-center justify-center bg-teal-500  m-2 p-10 rounded-sm" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                    {
+                        isUploading !== true ? <Upload className="text-white text-xl"></Upload> : <div> uploading </div>
+                    }
+                </Button>
 
-            { docUploadError !== "" && (
-            <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{docUploadError}</AlertDescription>
-            </Alert>
-            ) }
+                {docUploadError !== "" && (
+                    <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{docUploadError}</AlertDescription>
+                    </Alert>
+                )}
+            </div>
 
-            {!loading && !isDocsEmpty ? (<div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 p-4 overflow-y-auto ">
-                {docSearchText === "" ? (docs.map((doc) => (
-                    <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer h-84 w-64" onClick={() => routeToChat(doc.id, doc.doc_name)}>
-
-                        <CardContent className="relative aspect-square pointer-events-none">
-                            <Image
-                                src="/PDF_file_icon.svg"
-                                alt="pdf"
-                                fill
-                                className="object-contain"
-                                loading="eager"
-                            />
-                        </CardContent>
-
-                        <CardFooter className="text-center justify-center text-teal-500">
-                            <p>{doc.doc_name}</p>
-                        </CardFooter>
-
-                    </Card>
-                ))) :
-                    (searchedDocs.map((doc) => (
-                        <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer w-64 h-84" onClick={() => routeToChat(doc.id, doc.doc_name)}>
+            <div className="flex-1 overflow-y-auto flex flex-col items-center">
+                {!loading && !isDocsEmpty ? (<div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+                    {docSearchText === "" ? (docs.map((doc) => (
+                        <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer h-84 w-64" onClick={() => routeToChat(doc.id, doc.doc_name)}>
 
                             <CardContent className="relative aspect-square pointer-events-none">
                                 <Image
@@ -193,34 +177,54 @@ export default function DocsBody() {
                             </CardFooter>
 
                         </Card>
-                    )))
+                    ))) :
+                        (searchedDocs.map((doc) => (
+                            <Card key={doc.id} className="shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer w-64 h-84" onClick={() => routeToChat(doc.id, doc.doc_name)}>
+
+                                <CardContent className="relative aspect-square pointer-events-none">
+                                    <Image
+                                        src="/PDF_file_icon.svg"
+                                        alt="pdf"
+                                        fill
+                                        className="object-contain"
+                                        loading="eager"
+                                    />
+                                </CardContent>
+
+                                <CardFooter className="text-center justify-center text-teal-500">
+                                    <p>{doc.doc_name}</p>
+                                </CardFooter>
+
+                            </Card>
+                        )))
+                    }
+
+                </div>) :
+                    (
+                        <div>
+                            <Skeleton className="aspect-square w-full rounded-sm" />
+                            <Skeleton className="h-4 w-3/4 mx-auto" />
+                        </div>
+                    )
                 }
 
-            </div>) :
-                (
-                    <div>
-                        <Skeleton className="aspect-square w-full rounded-sm" />
-                        <Skeleton className="h-4 w-3/4 mx-auto" />
-                    </div>
-                )
-            }
+                {
+                    !loading && isDocsEmpty && (
+                        <div>
+                            <p> Upload documents to start</p>
+                        </div>
+                    )
+                }
 
-            {
-                !loading && isDocsEmpty  && (
-                    <div>
-                        <p> Upload documents to start</p>
-                    </div>
-                )
-            }
 
-            
-            { docsFetchError !== "" && (
-            <Alert variant="destructive" className="rounded-sm m-3 w-2/3">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{docsFetchError}</AlertDescription>
-            </Alert>
-            ) }
+                {docsFetchError !== "" && (
+                    <Alert variant="destructive" className="rounded-sm m-3 w-2/3">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{docsFetchError}</AlertDescription>
+                    </Alert>
+                )}
+            </div>
 
 
 
