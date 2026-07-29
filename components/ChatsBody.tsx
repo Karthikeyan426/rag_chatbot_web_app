@@ -18,6 +18,7 @@ export default function ChatsBody(props: { docId: string, docName: string }) {
     const [lastChatId, setLastChatId] = useState("");
     const router = useRouter();
     const inputRef = useRef<HTMLTextAreaElement>(null);
+    const chatContainerRef = useRef<HTMLDivElement>(null);
 
 
     async function handleFetchChatHistory() {
@@ -26,6 +27,7 @@ export default function ChatsBody(props: { docId: string, docName: string }) {
             setChatHistory([]);
             setLoading(true);
             const chatHistory = await fetchChatHistory(props.docId);
+            chatHistory.sort
             setChatHistory(chatHistory);
             setLastChatId(chatHistory[0]["id"]);
         }
@@ -138,9 +140,7 @@ export default function ChatsBody(props: { docId: string, docName: string }) {
             setLoading(true);
             const data: QueryRequest = { doc_id: props.docId, question: inputRef.current?.value! }
             const chat = await processQuery(data);
-            lastFiveChats.shift();
-            lastFiveChats.push(chat);
-            setLastFiveChats(lastFiveChats);
+            setLastFiveChats(prev => [...prev.slice(1), chat]);
         }
         catch (err) {
             if (axios.isAxiosError(err)) {
@@ -174,6 +174,13 @@ export default function ChatsBody(props: { docId: string, docName: string }) {
         }, [lastChatId]
     )
 
+    useEffect(() => {
+    if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop =
+            chatContainerRef.current.scrollHeight;
+    }
+}, [lastFiveChats]);
+
     return (
         <div className="flex flex-row h-full w-screen ">
 
@@ -185,7 +192,7 @@ export default function ChatsBody(props: { docId: string, docName: string }) {
                 <div className="flex flex-col gap-3 mt-3 mb-1 h-auto overflow-y-auto">
                     {
                         chatHistory.map((chat) => (
-                            <div key={chat.id} className="flex flex-row justify-between bg-slate-300 text-gray-800 rounded-lg px-3 py-2 hover:bg-cyan-50 cursor-pointer ml-3" >
+                            <div key={chat.id} className="flex flex-row justify-between bg-slate-300 text-gray-800 rounded-lg px-3 py-2 hover:bg-cyan-50 cursor-pointer ml-3" onClick={async () =>{await handleFetchChat(props.docId, chat.id)}} >
                                 <p className="font-medium truncate">{chat.question_content}</p>
 
                                 <div className="text-xs text-gray-500 ml-2 whitespace-nowrap">{chat.queried_at}</div>
@@ -234,7 +241,7 @@ export default function ChatsBody(props: { docId: string, docName: string }) {
                 </div>
 
 
-                <div className="flex flex-col overflow-y-auto">
+                <div className="flex flex-col overflow-y-auto" ref= {chatContainerRef}>
                     {
                         lastFiveChats.map(
                             (chat) => (
@@ -255,7 +262,7 @@ export default function ChatsBody(props: { docId: string, docName: string }) {
                 </div>
 
 
-                <div className="flex flex-row m-5 items-center justify-center w-4/5">
+                <div className="sticky bottom-0 flex flex-row m-5 items-center justify-center w-4/5">
                     <textarea
                         ref={inputRef}
                         className="border border-gray-300 bg-white w-3/4 rounded-md px-3 py-2 resize-none overflow-hidden focus:outline-none focus:ring-2 focus:ring-teal-500 min-h-10 max-h-40"
@@ -268,6 +275,7 @@ export default function ChatsBody(props: { docId: string, docName: string }) {
                         placeholder="Ask a question..."
                         onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
+                                inputRef.current!.value = ""
                                 e.preventDefault();
                                 handleQuery();
                             }
