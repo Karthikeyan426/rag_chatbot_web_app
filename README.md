@@ -1,36 +1,262 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📚 RAG Chatbot Web App
 
-## Getting Started
+A modern, responsive web application for interacting with a Retrieval-Augmented Generation (RAG) chatbot. Users can securely upload documents, manage their knowledge base, and chat with an AI assistant that answers questions using the uploaded documents.
 
-First, run the development server:
+> This project serves as the frontend for the RAG Chatbot backend built with FastAPI, PostgreSQL, vector embeddings, and LLM integration.
+
+---
+
+## ✨ Features
+
+- 🔐 JWT Authentication
+  - User Registration
+  - Secure Login
+  - Protected Routes
+
+- 📂 Document Management
+  - Upload documents
+  - View uploaded documents
+  - Delete documents
+  - Loading indicators
+
+- 🔍 Document Search
+  - Search uploaded documents instantly
+  - Fast document retrieval
+
+- 💬 AI Chat
+  - Chat with individual documents
+  - Conversation history
+  - Clean chat interface
+  - Real-time responses
+
+- 🎨 Modern UI
+  - Built with Next.js App Router
+  - Tailwind CSS
+  - ShadCN UI Components
+  - Fully responsive layout
+
+---
+
+# 🖼️ Screenshots
+
+## Login
+
+> Replace with your screenshot.
+
+![Login](./screenshots/login.png)
+
+---
+
+## Registration
+
+> Replace with your screenshot.
+
+![Registration](./screenshots/registration.png)
+
+---
+
+## Documents
+
+> Replace with your screenshot.
+
+![Documents](./screenshots/documents.png)
+
+---
+
+## Document Search
+
+> Replace with your screenshot.
+
+![Document Search](./screenshots/documents_search.png)
+
+---
+
+## Chats
+
+> Replace with your screenshot.
+
+![Chats](./screenshots/chats.png)
+
+---
+
+# 🏗️ Tech Stack
+
+| Category | Technology |
+|------------|------------|
+| Framework | Next.js 16 |
+| Language | TypeScript |
+| UI | React 19 |
+| Styling | Tailwind CSS v4 |
+| Components | ShadCN UI |
+| Forms | React Hook Form |
+| Validation | Zod |
+| Icons | Lucide React |
+| HTTP Client | Axios |
+
+---
+
+# 📁 Project Structure
+
+```
+app/
+│
+├── login/
+├── register/
+├── documents/
+├── chats/
+│
+components/
+│
+├── auth/
+├── ui/
+├── DocsBody.tsx
+└── ChatsBody.tsx
+
+lib/
+
+├── auth.ts
+├── axios.ts
+├── chats.ts
+├── docs.ts
+└── utils.ts
+```
+
+---
+
+# 🚀 Getting Started
+
+## Clone the repository
+
+```bash
+git clone https://github.com/Karthikeyan426/rag_chatbot_web_app.git
+```
+
+```
+cd rag_chatbot_web_app
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Create environment variables
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+Start the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+# 🔗 Backend
 
-To learn more about Next.js, take a look at the following resources:
+This frontend communicates with the FastAPI backend through REST APIs.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Main functionalities include:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- User Authentication
+- Document Upload
+- Document Retrieval
+- Document Deletion
+- Chat History
+- AI Question Answering
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# 🔄 Application Flow
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+User
+   │
+   ▼
+Register / Login
+   │
+   ▼
+Dashboard
+   │
+   ├──────── Upload Document
+   │
+   ├──────── Search Documents
+   │
+   ├──────── Delete Documents
+   │
+   ▼
+Select Document
+   │
+   ▼
+Chat Interface
+   │
+   ▼
+FastAPI Backend
+   │
+   ▼
+LLM Response
+```
+
+---
+
+# 🎨 UI Highlights
+
+- Responsive design
+- Clean dashboard layout
+- Interactive chat interface
+- Loading skeletons
+- Toast/error handling
+- Modern authentication pages
+- Reusable UI components
+
+---
+
+# 📦 Dependencies
+
+- Next.js
+- React
+- Tailwind CSS
+- ShadCN UI
+- Axios
+- React Hook Form
+- Zod
+- Lucide React
+
+---
+
+# 🔮 Future Improvements
+
+- Multiple document selection
+- Dark mode
+- Markdown rendering
+- Streaming AI responses
+- Voice input
+- File previews
+- Folder organization
+- User profile settings
+- Chat export
+- Drag-and-drop uploads
+
+---
+
+# 👨‍💻 Author
+
+**Karthikeyan Saravanan**
+
+GitHub:
+https://github.com/Karthikeyan426
+
+---
+
+# ⭐ Support
+
+If you found this project useful, consider giving it a ⭐ on GitHub.
