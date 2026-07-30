@@ -180,7 +180,7 @@ export default function DocsBody() {
                 )}
             </div>
 
-            <div className="flex-1 overflow-y-auto flex flex-col items-center">
+            <div className="flex-1 overflow-y-auto flex flex-col items-center scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-100">
                 {!loading && !isDocsEmpty ? (<div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
                     {docSearchText === "" ? (docs.map((doc) => {
                         const cardClass = `flex flex-col shadow-md w-64 transition-all ${doc.status === "uploaded"

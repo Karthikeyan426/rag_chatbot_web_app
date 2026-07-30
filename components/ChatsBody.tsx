@@ -175,11 +175,11 @@ export default function ChatsBody(props: { docId: string, docName: string }) {
     )
 
     useEffect(() => {
-    if (chatContainerRef.current) {
-        chatContainerRef.current.scrollTop =
-            chatContainerRef.current.scrollHeight;
-    }
-}, [lastFiveChats]);
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop =
+                chatContainerRef.current.scrollHeight;
+        }
+    }, [lastFiveChats]);
 
     return (
         <div className="flex flex-row h-full w-screen ">
@@ -189,10 +189,10 @@ export default function ChatsBody(props: { docId: string, docName: string }) {
                     Chat History
                 </div>
 
-                <div className="flex flex-col gap-3 mt-3 mb-1 h-auto overflow-y-auto">
+                <div className="flex flex-col gap-3 mt-3 mb-1 h-auto overflow-y-auto  scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-100">
                     {
                         chatHistory.map((chat) => (
-                            <div key={chat.id} className="flex flex-row justify-between bg-slate-300 text-gray-800 rounded-lg px-3 py-2 hover:bg-cyan-50 cursor-pointer ml-3" onClick={async () =>{await handleFetchChat(props.docId, chat.id)}} >
+                            <div key={chat.id} className="flex flex-row justify-between bg-slate-300 text-gray-800 rounded-lg px-3 py-2 hover:bg-cyan-50 cursor-pointer ml-3" onClick={async () => { await handleFetchChat(props.docId, chat.id) }} >
                                 <p className="font-medium truncate">{chat.question_content}</p>
 
                                 <div className="text-xs text-gray-500 ml-2 whitespace-nowrap">{chat.queried_at}</div>
@@ -241,7 +241,7 @@ export default function ChatsBody(props: { docId: string, docName: string }) {
                 </div>
 
 
-                <div className="flex flex-col overflow-y-auto" ref= {chatContainerRef}>
+                <div className="flex flex-col overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-100" ref={chatContainerRef}>
                     {
                         lastFiveChats.map(
                             (chat) => (
